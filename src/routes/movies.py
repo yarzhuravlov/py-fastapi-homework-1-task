@@ -34,15 +34,17 @@ async def movie_list(
     if len(movies) == 0:
         raise HTTPException(status_code=404, detail="No movies found.")
 
-    if prev_page := page - 1 > 0:
-        prev_page = f"/theater/movies/?page={prev_page}&per_page={per_page}"
+    prev_page_num = page - 1
+    if prev_page_num > 0:
+        prev_page = f"/theater/movies/?page={prev_page_num}&per_page={per_page}"
     else:
         prev_page = None
 
     total_pages = math.ceil(movies_count / per_page)
 
-    if next_page := page + 1 < total_pages:
-        next_page = f"/theater/movies/?page={next_page}&per_page={per_page}"
+    next_page_num = page + 1
+    if next_page_num < total_pages:
+        next_page = f"/theater/movies/?page={next_page_num}&per_page={per_page}"
     else:
         next_page = None
 
