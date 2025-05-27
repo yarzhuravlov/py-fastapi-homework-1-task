@@ -11,7 +11,10 @@ class Base(DeclarativeBase):
 class MovieModel(Base):
     __tablename__ = "movies"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(  # noqa: VNE003
+        primary_key=True,
+        autoincrement=True,
+    )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     date: Mapped[datetime.date] = mapped_column(Date, nullable=False)
     score: Mapped[float] = mapped_column(Float, nullable=False)
@@ -29,5 +32,5 @@ class MovieModel(Base):
         UniqueConstraint("name", "date", name="unique_movie_constraint"),
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Movie(name='{self.name}', release_date='{self.date}', score={self.score})>"

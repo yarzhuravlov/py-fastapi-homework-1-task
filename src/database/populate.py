@@ -17,7 +17,7 @@ class CSVDatabaseSeeder:
         _db_session (AsyncSession): Asynchronous SQLAlchemy session for database operations.
     """
 
-    def __init__(self, csv_file_path: str, db_session: AsyncSession):
+    def __init__(self, csv_file_path: str, db_session: AsyncSession) -> None:
         """
         Initialize the CSVDatabaseSeeder with a file path and an async database session.
 
@@ -36,7 +36,9 @@ class CSVDatabaseSeeder:
         :return: True if the database contains at least one record, False otherwise.
         :rtype: bool
         """
-        result = await self._db_session.execute(select(func.count()).select_from(MovieModel))
+        result = await self._db_session.execute(
+            select(func.count()).select_from(MovieModel)
+        )
         total_count = result.scalar_one()
         return total_count > 0
 
@@ -51,13 +53,15 @@ class CSVDatabaseSeeder:
         :rtype: pd.DataFrame
         """
         data = pd.read_csv(self._csv_file_path)
-        data = data.drop_duplicates(subset=['names', 'date_x'], keep='first')
-        data['crew'] = data['crew'].fillna('Unknown')
-        data['genre'] = data['genre'].fillna('Unknown')
-        data['genre'] = data['genre'].str.replace('\u00A0', '', regex=True)
-        data['date_x'] = data['date_x'].str.strip()
-        data['date_x'] = pd.to_datetime(data['date_x'], format='%m/%d/%Y', errors='coerce')
-        data['date_x'] = data['date_x'].dt.date
+        data = data.drop_duplicates(subset=["names", "date_x"], keep="first")
+        data["crew"] = data["crew"].fillna("Unknown")
+        data["genre"] = data["genre"].fillna("Unknown")
+        data["genre"] = data["genre"].str.replace("\u00a0", "", regex=True)
+        data["date_x"] = data["date_x"].str.strip()
+        data["date_x"] = pd.to_datetime(
+            data["date_x"], format="%m/%d/%Y", errors="coerce"
+        )
+        data["date_x"] = data["date_x"].dt.date
         print("Preprocessing csv file")
         return data
 
@@ -79,20 +83,24 @@ class CSVDatabaseSeeder:
             data = await self._preprocess_csv()
 
             async with self._db_session.begin():
-                for _, row in tqdm(data.iterrows(), total=data.shape[0], desc="Seeding database"):
+                for _, row in tqdm(
+                    data.iterrows(),
+                    total=data.shape[0],
+                    desc="Seeding database",
+                ):
                     movie = MovieModel(
-                        name=row['names'],
-                        date=row['date_x'],
-                        score=float(row['score']),
-                        genre=row['genre'],
-                        overview=row['overview'],
-                        crew=row['crew'],
-                        orig_title=row['orig_title'],
-                        status=row['status'],
-                        orig_lang=row['orig_lang'],
-                        budget=float(row['budget_x']),
-                        revenue=float(row['revenue']),
-                        country=row['country']
+                        name=row["names"],
+                        date=row["date_x"],
+                        score=float(row["score"]),
+                        genre=row["genre"],
+                        overview=row["overview"],
+                        crew=row["crew"],
+                        orig_title=row["orig_title"],
+                        status=row["status"],
+                        orig_lang=row["orig_lang"],
+                        budget=float(row["budget_x"]),
+                        revenue=float(row["revenue"]),
+                        country=row["country"],
                     )
                     self._db_session.add(movie)
 

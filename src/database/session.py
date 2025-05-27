@@ -9,7 +9,7 @@ from database import Base
 
 settings = get_settings()
 
-DATABASE_URL = f"sqlite+aiosqlite:///{settings.PATH_TO_DB}"
+DATABASE_URL = f"sqlite+aiosqlite:///{settings.PATH_TO_DB}"  # noqa: E231
 
 engine = create_async_engine(DATABASE_URL, echo=False)
 
